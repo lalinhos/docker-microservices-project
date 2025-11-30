@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  user_service:
+    build: ./user_service
+    container_name: desafio4_user_service
+    ports:
+      # Expor a porta 5000 para testes, mas em produção não seria exposta
+      - "5000:5000"
+    environment:
+      SERVICE_NAME: user_service
+
+  consumer_service:
+    build: ./consumer_service
+    container_name: desafio4_consumer_service
+    ports:
+      - "5001:5001"
+    environment:
+      USER_SERVICE_URL: http://user_service:5000/users
+    depends_on:
+      - user_service

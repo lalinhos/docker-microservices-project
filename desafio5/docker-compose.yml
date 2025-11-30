@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  user_service:
+    build: ./user_service
+    container_name: desafio5_user_service
+    # Porta 5000 exposta apenas internamente
+    environment:
+      SERVICE_NAME: user_service
+
+  order_service:
+    build: ./order_service
+    container_name: desafio5_order_service
+    # Porta 5001 exposta apenas internamente
+    environment:
+      SERVICE_NAME: order_service
+    depends_on:
+      - user_service # Dependência lógica para garantir a ordem de inicialização
+
+  api_gateway:
+    build: ./api_gateway
+    container_name: desafio5_api_gateway
+    ports:
+      # Apenas o Gateway é exposto externamente
+      - "8080:8080"
+    environment:
+      USER_SERVICE_URL: http://user_service:5000
+      ORDER_SERVICE_URL: http://order_service:5001
+    depends_on:
+      - user_service
+      - order_service
